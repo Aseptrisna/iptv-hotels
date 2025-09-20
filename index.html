@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel IPTV - Tampilan TV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.min.js"></script>
+    <script src="https://unpkg.com/lucide-icons"></script>
+
+    <style>
+        :root {
+            --tv-accent: #2dd4bf;
+            /* Teal */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .tv-bg-gradient {
+            background: linear-gradient(160deg, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 1) 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .zoom-in {
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tv-nav-item.active {
+            background-color: rgba(45, 212, 191, 0.2);
+            color: var(--tv-accent);
+            border-left: 4px solid var(--tv-accent);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900">
+
+    <div id="tvView" class="fade-in">
+        <div class="relative min-h-screen w-full bg-cover bg-center text-white"
+            style="background-image: url('https://placehold.co/1920x1080/0f172a/94a3b8?text=Selamat+Datang&font=inter');">
+            <div class="absolute inset-0 tv-bg-gradient"></div>
+
+            <div class="relative flex h-screen">
+                <aside class="flex flex-col items-center bg-black/30 w-24 space-y-6 py-8 backdrop-blur-sm">
+                    <img src="hotel.png" alt="Hotel Logo" class="w-12 h-12 rounded-lg">
+                    <nav class="flex flex-col items-center space-y-2 w-full">
+                        <a href="#" onclick="showTvContent('home')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="home"></i><span class="text-xs">Beranda</span>
+                        </a>
+                        <a href="#" onclick="showTvContent('food')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="utensils-crossed"></i><span class="text-xs">Restoran</span>
+                        </a>
+                        <a href="#" onclick="showTvContent('services')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="concierge-bell"></i><span class="text-xs">Layanan</span>
+                        </a>
+                        <a href="#" onclick="showTvContent('facilities')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="building-2"></i><span class="text-xs">Fasilitas</span>
+                        </a>
+                        <a href="#" onclick="showTvContent('media')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="film"></i><span class="text-xs">TV & Film</span>
+                        </a>
+                        <a href="#" onclick="showTvContent('youtube')"
+                            class="tv-nav-item p-4 w-full flex flex-col items-center space-y-1 transition-colors duration-200">
+                            <i data-lucide="youtube"></i><span class="text-xs">YouTube</span>
+                        </a>
+                    </nav>
+                </aside>
+
+                <main class="flex-1 p-8 md:p-12 overflow-y-auto">
+                    <header class="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 class="text-4xl font-bold">Selamat Datang, <span id="guestName"
+                                    class="text-teal-300">Bapak Asep Trisna Setiawan</span></h1>
+                            <p class="text-lg text-gray-300">Nikmati pengalaman menginap Anda di The Grand Hotel.</p>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <div onclick="openCartModal()" class="relative cursor-pointer">
+                                <i data-lucide="shopping-cart" class="text-white hover:text-teal-300 transition"></i>
+                                <span id="cart-count"
+                                    class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                            </div>
+                            <div class="text-right">
+                                <p id="time" class="text-3xl font-semibold">15:46</p>
+                                <p id="date" class="text-gray-400">Sabtu, 20 September 2025</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div id="tv-content-home" class="tv-content fade-in">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex items-center space-x-6">
+                                <i data-lucide="sun-cloud" class="w-16 h-16 text-teal-300"></i>
+                                <div>
+                                    <p class="text-5xl font-bold">29°C</p>
+                                    <p class="text-gray-300">Bandar Lampung, Cerah Berawan</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex items-center space-x-6">
+                                <i data-lucide="key-round" class="w-16 h-16 text-teal-300"></i>
+                                <div>
+                                    <p class="text-gray-300 text-lg">Kamar Anda</p>
+                                    <p class="text-3xl font-bold">808</p>
+                                    <p class="text-gray-400">Tipe: Deluxe Suite</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex items-center space-x-6">
+                                <i data-lucide="wifi" class="w-16 h-16 text-teal-300"></i>
+                                <div>
+                                    <p class="text-gray-300 text-lg">Akses Wi-Fi</p>
+                                    <p class="text-xl font-semibold">TheGrandHotel_WiFi</p>
+                                    <p class="text-gray-400">Password: <span
+                                            class="font-semibold text-white">grandhotel2025</span></p>
+                                </div>
+                            </div>
+
+                            <div onclick="showTvContent('food')"
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-white/20 transition-all duration-300 group">
+                                <i data-lucide="utensils-crossed"
+                                    class="w-12 h-12 mb-2 text-teal-300 group-hover:scale-110 transition-transform"></i>
+                                <h3 class="font-semibold text-lg">Pesan Makanan</h3>
+                                <p class="text-sm text-gray-400">Lihat menu dan pesan ke kamar</p>
+                            </div>
+
+                            <div onclick="showTvContent('facilities')"
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-white/20 transition-all duration-300 group">
+                                <i data-lucide="building-2"
+                                    class="w-12 h-12 mb-2 text-teal-300 group-hover:scale-110 transition-transform"></i>
+                                <h3 class="font-semibold text-lg">Info Fasilitas</h3>
+                                <p class="text-sm text-gray-400">Kolam renang, gym, dan spa</p>
+                            </div>
+
+                            <div onclick="showTvContent('media')"
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-white/20 transition-all duration-300 group">
+                                <i data-lucide="film"
+                                    class="w-12 h-12 mb-2 text-teal-300 group-hover:scale-110 transition-transform"></i>
+                                <h3 class="font-semibold text-lg">TV & Film</h3>
+                                <p class="text-sm text-gray-400">Tonton saluran TV dan film populer</p>
+                            </div>
+
+                        </div>
+
+                        <div class="mt-8 relative rounded-lg overflow-hidden bg-cover bg-center p-8 h-64 flex flex-col justify-end items-start"
+                            style="background-image: linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('https://placehold.co/1200x400/8b5cf6/ffffff?text=Spa+Promo');">
+                            <h2 class="text-3xl font-bold">Diskon 20% Spa & Wellness</h2>
+                            <p class="mt-2 mb-4 max-w-lg text-gray-200">Manjakan diri Anda dengan perawatan spa
+                                eksklusif kami. Penawaran terbatas!</p>
+                            <button onclick="showTvContent('facilities')"
+                                class="bg-teal-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-400 transition">Lihat
+                                Detail</button>
+                        </div>
+                    </div>
+
+                    <div id="tv-content-food" class="tv-content hidden fade-in">
+                        <h2 class="text-2xl font-semibold mb-6 border-l-4 border-teal-400 pl-4">Menu Makanan & Minuman
+                        </h2>
+                        <div id="food-menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+
+                    <div id="tv-content-services" class="tv-content hidden fade-in">
+                        <h2 class="text-2xl font-semibold mb-6 border-l-4 border-teal-400 pl-4">Layanan Hotel</h2>
+                        <div id="room-service-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <h3 class="text-xl font-semibold mb-4 col-span-1 md:col-span-2 lg:col-span-3 text-teal-300">
+                                Kebutuhan Kamar</h3>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="spray-can" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Bersihkan Kamar</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Jadwalkan pembersihan untuk kamar Anda.</p>
+                                </div>
+                                <button onclick="requestService('Bersihkan Kamar')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="towel" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Tambah Handuk</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Minta set handuk bersih tambahan.</p>
+                                </div>
+                                <button onclick="requestService('Tambah Handuk')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="sparkles" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Amenities Tambahan</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Sikat gigi, sabun, shampoo, atau lainnya.</p>
+                                </div>
+                                <button onclick="requestService('Amenities Tambahan')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="pillow" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Permintaan Khusus</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Bantal tambahan, selimut, atau tempat tidur
+                                        bayi.</p>
+                                </div>
+                                <button onclick="requestService('Permintaan Khusus')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="iron" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Pinjam Setrika</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Pinjam setrika dan papan setrika untuk pakaian
+                                        Anda.</p>
+                                </div>
+                                <button onclick="requestService('Pinjam Setrika')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <h3 class="text-xl font-semibold my-4 col-span-1 md:col-span-2 lg:col-span-3 text-teal-300">
+                                Layanan Premium & Pemesanan</h3>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="washing-machine" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Layanan Laundry</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Kami akan mengambil dan membersihkan pakaian
+                                        Anda.</p>
+                                </div>
+                                <button onclick="requestService('Layanan Laundry')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="spa" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Pijat di Kamar</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Nikmati layanan spa & pijat profesional di
+                                        kamar.</p>
+                                </div>
+                                <button onclick="requestService('Pijat di Kamar')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="car" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Sewa Transportasi</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Pesan taksi, sewa mobil, atau antar-jemput
+                                        bandara.</p>
+                                </div>
+                                <button onclick="requestService('Sewa Transportasi')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="map" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Pemesanan Tur Lokal</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Jelajahi atraksi lokal dengan tur yang kami
+                                        rekomendasikan.</p>
+                                </div>
+                                <button onclick="requestService('Pemesanan Tur Lokal')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <h3 class="text-xl font-semibold my-4 col-span-1 md:col-span-2 lg:col-span-3 text-teal-300">
+                                Bantuan & Informasi</h3>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="alarm-clock" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Panggilan Bangun</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Atur panggilan bangun tidur otomatis.</p>
+                                </div>
+                                <button onclick="requestService('Panggilan Bangun')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="wifi" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Bantuan Teknis</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Bantuan untuk koneksi Wi-Fi atau masalah TV.
+                                    </p>
+                                </div>
+                                <button onclick="requestService('Bantuan Teknis')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                                <div class="flex-grow">
+                                    <i data-lucide="calendar-days" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                    <h3 class="font-semibold text-lg mb-2">Informasi Acara</h3>
+                                    <p class="text-gray-300 text-sm mb-4">Dapatkan informasi tentang acara di hotel atau
+                                        sekitar.</p>
+                                </div>
+                                <button onclick="requestService('Informasi Acara')"
+                                    class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta
+                                    Layanan</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tv-content-facilities" class="tv-content hidden fade-in">
+                        <h2 class="text-2xl font-semibold mb-6 border-l-4 border-teal-400 pl-4">Fasilitas Hotel</h2>
+                        <div id="facilities-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20">
+                                <img src="https://placehold.co/600x400/0ea5e9/ffffff?text=Kolam+Renang"
+                                    alt="Kolam Renang Infinity" class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="font-semibold text-xl mb-2">Kolam Renang Infinity</h3>
+                                    <p class="text-sm text-teal-300 mb-3"><i data-lucide="clock"
+                                            class="inline w-4 h-4 mr-1"></i> Jam Buka: 07:00 - 20:00</p>
+                                    <p class="text-gray-300">Nikmati pemandangan kota dari kolam renang di atap kami.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20">
+                                <img src="https://placehold.co/600x400/f97316/ffffff?text=Gym" alt="Pusat Kebugaran"
+                                    class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="font-semibold text-xl mb-2">Pusat Kebugaran</h3>
+                                    <p class="text-sm text-teal-300 mb-3"><i data-lucide="clock"
+                                            class="inline w-4 h-4 mr-1"></i> Jam Buka: 06:00 - 22:00</p>
+                                    <p class="text-gray-300">Peralatan modern untuk menjaga rutinitas kebugaran Anda.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20">
+                                <img src="https://placehold.co/600x400/8b5cf6/ffffff?text=Spa" alt="Spa & Wellness"
+                                    class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="font-semibold text-xl mb-2">Spa & Wellness</h3>
+                                    <p class="text-sm text-teal-300 mb-3"><i data-lucide="clock"
+                                            class="inline w-4 h-4 mr-1"></i> Jam Buka: 09:00 - 21:00</p>
+                                    <p class="text-gray-300">Relaksasi total dengan terapis profesional kami.</p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20">
+                                <img src="https://placehold.co/600x400/10b981/ffffff?text=Restoran" alt="Restoran"
+                                    class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="font-semibold text-xl mb-2">Restoran & Lounge</h3>
+                                    <p class="text-sm text-teal-300 mb-3"><i data-lucide="clock"
+                                            class="inline w-4 h-4 mr-1"></i> Buka 24 Jam</p>
+                                    <p class="text-gray-300">Sajian kuliner internasional dan lokal yang disiapkan oleh
+                                        chef terbaik kami.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tv-content-media" class="tv-content hidden fade-in">
+                        <h2 class="text-2xl font-semibold mb-6 border-l-4 border-teal-400 pl-4">TV & Film</h2>
+                        <div class="mb-10">
+                            <h3 class="text-xl font-semibold mb-4">Saluran TV Langsung</h3>
+                            <div class="flex overflow-x-auto space-x-4 pb-4 horizontal-scroll">
+                                <div class="flex-shrink-0 w-40 text-center cursor-pointer group">
+                                    <div
+                                        class="bg-gray-700 h-24 rounded-lg flex items-center justify-center group-hover:bg-teal-500/20 transition">
+                                        <img src="hotel.png" alt="Channel Logo" class="h-10">
+                                    </div>
+                                    <p class="mt-2 text-sm">TVRI Nasional</p>
+                                </div>
+                                <div class="flex-shrink-0 w-40 text-center cursor-pointer group">
+                                    <div
+                                        class="bg-gray-700 h-24 rounded-lg flex items-center justify-center group-hover:bg-teal-500/20 transition">
+                                        <img src="https://placehold.co/100x50/ffffff/000000?text=RCTI"
+                                            alt="Channel Logo" class="h-10">
+                                    </div>
+                                    <p class="mt-2 text-sm">RCTI</p>
+                                </div>
+                                <div class="flex-shrink-0 w-40 text-center cursor-pointer group">
+                                    <div
+                                        class="bg-gray-700 h-24 rounded-lg flex items-center justify-center group-hover:bg-teal-500/20 transition">
+                                        <img src="https://placehold.co/100x50/ffffff/000000?text=HBO" alt="Channel Logo"
+                                            class="h-10">
+                                    </div>
+                                    <p class="mt-2 text-sm">HBO</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-10">
+                            <h3 class="text-xl font-semibold mb-4">Film Populer</h3>
+                            <div class="flex overflow-x-auto space-x-4 pb-4 horizontal-scroll">
+                                <div class="flex-shrink-0 w-48 group cursor-pointer">
+                                    <div
+                                        class="relative rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
+                                        <img src="https://placehold.co/300x450/ef4444/ffffff?text=Action+Movie"
+                                            alt="Movie Poster" class="w-full h-auto">
+                                        <div
+                                            class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <i data-lucide="play-circle" class="w-12 h-12 text-white"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mt-2 font-medium truncate">The Grand Adventure</p>
+                                </div>
+                                <div class="flex-shrink-0 w-48 group cursor-pointer">
+                                    <div
+                                        class="relative rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
+                                        <img src="https://placehold.co/300x450/3b82f6/ffffff?text=Sci-Fi+Saga"
+                                            alt="Movie Poster" class="w-full h-auto">
+                                        <div
+                                            class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <i data-lucide="play-circle" class="w-12 h-12 text-white"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mt-2 font-medium truncate">Cyber Nusantara</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tv-content-youtube" class="tv-content hidden fade-in">
+                        <h2 class="text-2xl font-semibold mb-6 border-l-4 border-teal-400 pl-4">YouTube</h2>
+                        <div class="relative mb-6">
+                            <input type="text" placeholder="Cari video..."
+                                class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <div class="aspect-video mb-8">
+                            <iframe class="rounded-lg w-full h-full" src="https://www.youtube.com/embed/LXb3EKWsInQ"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Rekomendasi untuk Anda</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="cursor-pointer group">
+                                    <div class="relative aspect-video bg-gray-700 rounded-lg overflow-hidden mb-2">
+                                        <img src="https://placehold.co/400x225/f97316/ffffff?text=Travel+Vlog"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        <i data-lucide="play"
+                                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/80 w-10 h-10"></i>
+                                    </div>
+                                    <p class="font-medium text-sm truncate">Keindahan Tersembunyi di Indonesia</p>
+                                </div>
+                                <div class="cursor-pointer group">
+                                    <div class="relative aspect-video bg-gray-700 rounded-lg overflow-hidden mb-2">
+                                        <img src="https://placehold.co/400x225/10b981/ffffff?text=Cooking+Show"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        <i data-lucide="play"
+                                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/80 w-10 h-10"></i>
+                                    </div>
+                                    <p class="font-medium text-sm truncate">Resep Nasi Goreng Hotel Bintang 5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="fixed inset-0 z-50 items-center justify-center hidden modal-backdrop">
+        <div class="w-full max-w-2xl bg-gray-800 text-white rounded-lg shadow-xl zoom-in">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 class="text-xl font-bold flex items-center"><i data-lucide="shopping-cart" class="mr-2"></i>
+                    Keranjang Pesanan</h2>
+                <button onclick="closeCartModal()" class="p-1 rounded-full hover:bg-gray-700"><i data-lucide="x"
+                        class="w-5 h-5"></i></button>
+            </div>
+            <div id="cart-items" class="p-6 max-h-96 overflow-y-auto">
+            </div>
+            <div class="p-6 bg-gray-900/50 rounded-b-lg">
+                <div class="flex justify-between items-center text-lg mb-4">
+                    <span class="font-medium">Total:</span>
+                    <span id="cart-total" class="font-bold text-teal-300">Rp 0</span>
+                </div>
+                <button onclick="checkout()"
+                    class="w-full py-3 font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-500 transition-all shadow-lg hover:shadow-teal-500/40">Pesan
+                    Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-50 items-center justify-center hidden modal-backdrop">
+        <div class="w-full max-w-md bg-gray-800 text-center text-white rounded-lg shadow-xl p-8 zoom-in">
+            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check" class="w-12 h-12"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Pesanan Diterima!</h2>
+            <p class="text-gray-300">Pesanan Anda sedang diproses dan akan segera diantar ke kamar Anda.</p>
+            <button onclick="closeSuccessModal()"
+                class="mt-6 w-full py-2 font-semibold bg-teal-600 rounded-lg hover:bg-teal-500 transition">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // ==============================
+        // DEMO DATA
+        // ==============================
+        const foodMenuData = [
+            { id: 1, name: 'Nasi Goreng Spesial', price: 75000, image: 'https://placehold.co/400x300/f87171/ffffff?text=Nasi+Goreng' },
+            { id: 2, name: 'Sate Ayam Madura', price: 85000, image: 'https://placehold.co/400x300/fbbf24/ffffff?text=Sate+Ayam' },
+            { id: 3, name: 'Sop Buntut', price: 120000, image: 'https://placehold.co/400x300/a78bfa/ffffff?text=Sop+Buntut' },
+        ];
+
+        // KONTEN LAYANAN HOTEL DENGAN KATEGORI
+        const servicesData = [
+            {
+                category: "Kebutuhan Kamar",
+                items: [
+                    { name: 'Bersihkan Kamar', icon: 'spray-can', description: 'Jadwalkan pembersihan untuk kamar Anda.' },
+                    { name: 'Tambah Handuk', icon: 'towel', description: 'Minta set handuk bersih tambahan.' },
+                    { name: 'Amenities Tambahan', icon: 'sparkles', description: 'Sikat gigi, sabun, shampoo, atau lainnya.' },
+                    { name: 'Permintaan Khusus', icon: 'pillow', description: 'Bantal tambahan, selimut, atau tempat tidur bayi.' },
+                    { name: 'Pinjam Setrika', icon: 'iron', description: 'Pinjam setrika dan papan setrika untuk pakaian Anda.' }
+                ]
+            },
+            {
+                category: "Layanan Premium & Pemesanan",
+                items: [
+                    { name: 'Layanan Laundry', icon: 'washing-machine', description: 'Kami akan mengambil dan membersihkan pakaian Anda.' },
+                    { name: 'Pijat di Kamar', icon: 'spa', description: 'Nikmati layanan spa & pijat profesional di kamar.' },
+                    { name: 'Sewa Transportasi', icon: 'car', description: 'Pesan taksi, sewa mobil, atau antar-jemput bandara.' },
+                    { name: 'Pemesanan Tur Lokal', icon: 'map', description: 'Jelajahi atraksi lokal dengan tur yang kami rekomendasikan.' }
+                ]
+            },
+            {
+                category: "Bantuan & Informasi",
+                items: [
+                    { name: 'Panggilan Bangun', icon: 'alarm-clock', description: 'Atur panggilan bangun tidur otomatis.' },
+                    { name: 'Bantuan Teknis', icon: 'wifi', description: 'Bantuan untuk koneksi Wi-Fi atau masalah TV.' },
+                    { name: 'Informasi Acara', icon: 'calendar-days', description: 'Dapatkan informasi tentang acara di hotel atau sekitar.' }
+                ]
+            }
+        ];
+
+        const facilitiesData = [
+            { name: 'Kolam Renang Infinity', image: 'https://placehold.co/600x400/0ea5e9/ffffff?text=Kolam+Renang', hours: '07:00 - 20:00', description: 'Nikmati pemandangan kota dari kolam renang di atap kami.' },
+            { name: 'Pusat Kebugaran', image: 'https://placehold.co/600x400/f97316/ffffff?text=Gym', hours: '06:00 - 22:00', description: 'Peralatan modern untuk menjaga rutinitas kebugaran Anda.' },
+            { name: 'Spa & Wellness', image: 'https://placehold.co/600x400/8b5cf6/ffffff?text=Spa', hours: '09:00 - 21:00', description: 'Relaksasi total dengan terapis profesional kami.' },
+        ];
+
+        let cart = [];
+
+        // ==============================
+        // UI RENDERING
+        // ==============================
+        function renderFoodMenu() {
+            const container = document.getElementById('food-menu-container');
+            container.innerHTML = foodMenuData.map(item => `
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1">
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg">${item.name}</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <p class="text-teal-300 font-bold">${formatRupiah(item.price)}</p>
+                            <button onclick="addToCart(${item.id})" class="bg-teal-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-400 transition flex items-center space-x-2">
+                               <i data-lucide="plus" class="w-4 h-4"></i> <span>Tambah</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderServices() {
+            const container = document.getElementById('room-service-container');
+            let content = '';
+            servicesData.forEach(category => {
+                content += `<h3 class="text-xl font-semibold mb-4 col-span-1 md:col-span-2 lg:col-span-3 text-teal-300">${category.category}</h3>`;
+
+                category.items.forEach(service => {
+                    content += `
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-1 flex flex-col">
+                            <div class="flex-grow">
+                                <i data-lucide="${service.icon}" class="w-10 h-10 mb-3 text-teal-300"></i>
+                                <h3 class="font-semibold text-lg mb-2">${service.name}</h3>
+                                <p class="text-gray-300 text-sm mb-4">${service.description}</p>
+                            </div>
+                            <button onclick="requestService('${service.name}')" class="w-full mt-auto bg-teal-500/80 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-teal-500 transition">Minta Layanan</button>
+                        </div>
+                    `;
+                });
+            });
+            container.innerHTML = content;
+            lucide.createIcons();
+        }
+
+
+        function renderFacilities() {
+            const container = document.getElementById('facilities-container');
+            container.innerHTML = facilitiesData.map(facility => `
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20">
+                    <img src="${facility.image}" alt="${facility.name}" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h3 class="font-semibold text-xl mb-2">${facility.name}</h3>
+                        <p class="text-sm text-teal-300 mb-3"><i data-lucide="clock" class="inline w-4 h-4 mr-1"></i> Jam Buka: ${facility.hours}</p>
+                        <p class="text-gray-300">${facility.description}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // ==============================
+        // CART LOGIC
+        // ==============================
+        function addToCart(itemId) {
+            const foodItem = foodMenuData.find(item => item.id === itemId);
+            const itemInCart = cart.find(item => item.id === itemId);
+
+            if (itemInCart) {
+                itemInCart.quantity++;
+            } else {
+                cart.push({ ...foodItem, quantity: 1 });
+            }
+            updateCartUI();
+            openCartModal();
+        }
+
+        function updateCartUI() {
+            const cartCountEl = document.getElementById('cart-count');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (totalItems > 0) {
+                cartCountEl.textContent = totalItems;
+                cartCountEl.classList.remove('hidden');
+            } else {
+                cartCountEl.classList.add('hidden');
+            }
+            renderCartItems();
+        }
+
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalEl = document.getElementById('cart-total');
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<p class="text-center text-gray-400">Keranjang Anda kosong.</p>`;
+                cartTotalEl.textContent = formatRupiah(0);
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map(item => {
+                total += item.price * item.quantity;
+                return `
+                    <div class="flex items-center justify-between py-3 border-b border-gray-700">
+                        <div class="flex items-center">
+                            <img src="${item.image}" class="w-16 h-16 rounded-md object-cover mr-4">
+                            <div>
+                                <p class="font-semibold">${item.name}</p>
+                                <p class="text-sm text-gray-400">${formatRupiah(item.price)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeQuantity(${item.id}, -1)" class="p-1 rounded-full bg-gray-700 hover:bg-gray-600">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="changeQuantity(${item.id}, 1)" class="p-1 rounded-full bg-gray-700 hover:bg-gray-600">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            cartTotalEl.textContent = formatRupiah(total);
+        }
+
+        function changeQuantity(itemId, amount) {
+            const itemInCart = cart.find(item => item.id === itemId);
+            if (itemInCart) {
+                itemInCart.quantity += amount;
+                if (itemInCart.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== itemId);
+                }
+            }
+            updateCartUI();
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            cart = [];
+            updateCartUI();
+            closeCartModal();
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('successModal').classList.add('flex');
+        }
+
+        function requestService(serviceName) {
+            cart = [];
+            updateCartUI();
+            const successModal = document.getElementById('successModal');
+            successModal.querySelector('h2').textContent = 'Permintaan Diterima!';
+            successModal.querySelector('p').textContent = `Layanan "${serviceName}" akan segera kami proses.`;
+            successModal.classList.remove('hidden');
+            successModal.classList.add('flex');
+        }
+
+        // ==============================
+        // MODAL MANAGEMENT
+        // ==============================
+        function openCartModal() {
+            document.getElementById('cartModal').classList.remove('hidden');
+            document.getElementById('cartModal').classList.add('flex');
+        }
+        function closeCartModal() {
+            document.getElementById('cartModal').classList.add('hidden');
+            document.getElementById('cartModal').classList.remove('flex');
+        }
+        function closeSuccessModal() {
+            const successModal = document.getElementById('successModal');
+            successModal.classList.add('hidden');
+            successModal.classList.remove('flex');
+            successModal.querySelector('h2').textContent = 'Pesanan Diterima!';
+            successModal.querySelector('p').textContent = 'Pesanan Anda sedang diproses dan akan segera diantar ke kamar Anda.';
+        }
+
+        // ==============================
+        // GENERAL
+        // ==============================
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('date').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function showTvContent(contentId) {
+            document.querySelectorAll('.tv-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tv-content-${contentId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tv-nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.tv-nav-item[onclick="showTvContent('${contentId}')"]`).classList.add('active');
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        }
+
+        // ==============================
+        // INITIALIZATION
+        // ==============================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFoodMenu();
+            renderServices();
+            renderFacilities();
+            updateTime();
+            setInterval(updateTime, 60000); // Update time every minute
+            lucide.createIcons();
+            showTvContent('home');
+        });
+    </script>
+</body>
+
+</html>

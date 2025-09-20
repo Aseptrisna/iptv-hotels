@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel IPTV - Panel Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.min.js"></script>
+    <script src="https://unpkg.com/lucide-icons"></script>
+    
+    <style>
+        /* Custom styles for better aesthetics */
+        :root {
+            --admin-primary: #4f46e5; /* Indigo */
+            --admin-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .admin-bg-gradient {
+            background-color: var(--admin-bg);
+        }
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .admin-nav-item.active {
+            background-color: #eef2ff;
+            color: var(--admin-primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="adminView">
+        <div id="loginPage" class="flex items-center justify-center min-h-screen bg-gray-100">
+            <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
+                <div class="text-center">
+                    <img src="https://placehold.co/80x80/ffffff/4f46e5?text=LOGO&font=inter" alt="Admin Logo" class="w-20 h-20 mx-auto rounded-full ring-4 ring-indigo-100">
+                    <h1 class="text-3xl font-bold text-gray-800 mt-4">Admin IPTV Panel</h1>
+                    <p class="text-gray-500">Silakan login untuk melanjutkan</p>
+                </div>
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="username" class="text-sm font-medium text-gray-700">Username</label>
+                        <input id="username" type="text" value="admin" class="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:border-indigo-500 focus:bg-white focus:outline-none transition" required>
+                    </div>
+                    <div>
+                        <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                        <input id="password" type="password" value="password" class="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:border-indigo-500 focus:bg-white focus:outline-none transition" required>
+                    </div>
+                    <button type="submit" class="w-full py-3 font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all shadow-lg hover:shadow-indigo-500/40">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="adminDashboard" class="hidden min-h-screen admin-bg-gradient">
+            <div class="flex">
+                <aside class="w-64 bg-white shadow-lg text-gray-800 min-h-screen">
+                    <div class="p-6 text-center border-b">
+                        <img src="https://placehold.co/60x60/ffffff/4f46e5?text=LOGO&font=inter" alt="Admin Logo" class="w-16 h-16 mx-auto rounded-full ring-2 ring-indigo-100">
+                         <h2 class="mt-4 text-xl font-bold text-gray-800">IPTV Admin</h2>
+                    </div>
+                    <nav class="mt-4">
+                        <a href="#" onclick="showAdminPage('dashboard')" class="admin-nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 transition-colors duration-200">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
+                        </a>
+                        <a href="#" onclick="showAdminPage('rooms')" class="admin-nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 transition-colors duration-200">
+                            <i data-lucide="bed-double" class="w-5 h-5 mr-3"></i> Ruangan
+                        </a>
+                        <a href="#" onclick="showAdminPage('guests')" class="admin-nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 transition-colors duration-200">
+                            <i data-lucide="users" class="w-5 h-5 mr-3"></i> Tamu & Perangkat
+                        </a>
+                        <a href="#" onclick="showAdminPage('orders')" class="admin-nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 transition-colors duration-200">
+                            <i data-lucide="utensils-crossed" class="w-5 h-5 mr-3"></i> Pesanan Makanan
+                        </a>
+                        <a href="#" onclick="logout()" class="admin-nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 mt-8 transition-colors duration-200">
+                           <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> Logout
+                        </a>
+                    </nav>
+                </aside>
+
+                <main class="flex-1 p-8">
+                    <div id="admin-page-dashboard" class="admin-page fade-in">
+                        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                        <div class="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-4">
+                            <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Total Kamar</h3>
+                                    <p id="totalRooms" class="text-3xl font-bold text-gray-800">50</p>
+                                </div>
+                                <div class="p-3 bg-indigo-100 rounded-full"><i data-lucide="bed-double" class="w-6 h-6 text-indigo-600"></i></div>
+                            </div>
+                            <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Kamar Terisi</h3>
+                                    <p id="occupiedRooms" class="text-3xl font-bold text-gray-800">35</p>
+                                </div>
+                                <div class="p-3 bg-green-100 rounded-full"><i data-lucide="user-check" class="w-6 h-6 text-green-600"></i></div>
+                            </div>
+                            <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Total Tamu Aktif</h3>
+                                    <p id="totalGuests" class="text-3xl font-bold text-gray-800">35</p>
+                                </div>
+                                <div class="p-3 bg-sky-100 rounded-full"><i data-lucide="users" class="w-6 h-6 text-sky-600"></i></div>
+                            </div>
+                            <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Pesanan Baru</h3>
+                                    <p id="newOrders" class="text-3xl font-bold text-orange-500">0</p>
+                                </div>
+                                <div class="p-3 bg-orange-100 rounded-full"><i data-lucide="utensils-crossed" class="w-6 h-6 text-orange-600"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-page-rooms" class="admin-page hidden fade-in">
+                         <div class="flex justify-between items-center">
+                            <h1 class="text-3xl font-bold text-gray-800">Manajemen Ruangan</h1>
+                            <button onclick="openModal('addRoomModal')" class="px-5 py-2 font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all">
+                                <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i> Tambah Ruangan
+                            </button>
+                        </div>
+                        <div class="mt-6 bg-white rounded-xl shadow-lg overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-sm font-semibold text-gray-600">
+                                        <th class="px-6 py-4">No. Kamar</th>
+                                        <th class="px-6 py-4">Tipe Kamar</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roomsTableBody" class="text-gray-700 divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="admin-page-guests" class="admin-page hidden fade-in">
+                        <div class="flex justify-between items-center">
+                            <h1 class="text-3xl font-bold text-gray-800">Manajemen Tamu & Perangkat</h1>
+                            <button onclick="openModal('addGuestModal')" class="px-5 py-2 font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all">
+                                 <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i> Tambah Tamu
+                            </button>
+                        </div>
+                        <div class="mt-6 bg-white rounded-xl shadow-lg overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-sm font-semibold text-gray-600">
+                                        <th class="px-6 py-4">Nama Tamu</th>
+                                        <th class="px-6 py-4">No. Kamar</th>
+                                        <th class="px-6 py-4">ID Perangkat TV</th>
+                                        <th class="px-6 py-4">Check-in</th>
+                                        <th class="px-6 py-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="guestsTableBody" class="text-gray-700 divide-y divide-gray-200">
+                                   </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-page-orders" class="admin-page hidden fade-in">
+                        <div class="flex justify-between items-center">
+                            <h1 class="text-3xl font-bold text-gray-800">Pesanan Makanan Masuk</h1>
+                        </div>
+                        <div class="mt-6 bg-white rounded-xl shadow-lg overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-sm font-semibold text-gray-600">
+                                        <th class="px-6 py-4">No. Kamar</th>
+                                        <th class="px-6 py-4">Detail Pesanan</th>
+                                        <th class="px-6 py-4">Total</th>
+                                        <th class="px-6 py-4">Waktu</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="foodOrdersTableBody" class="text-gray-700 divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div id="addRoomModal" class="fixed inset-0 z-50 items-center justify-center hidden modal-backdrop">
+        <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-xl fade-in">
+             <div class="flex justify-between items-center pb-3 border-b">
+                <h2 class="text-2xl font-bold text-gray-800">Tambah Ruangan Baru</h2>
+                <button onclick="closeModal('addRoomModal')" class="p-1 rounded-full hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+             </div>
+            <form id="addRoomForm" class="mt-6">
+                <div class="mb-4">
+                    <label for="roomNumber" class="block text-sm font-medium text-gray-700 mb-1">Nomor Kamar</label>
+                    <input type="text" id="roomNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-300" required>
+                </div>
+                <div class="mb-4">
+                    <label for="roomType" class="block text-sm font-medium text-gray-700 mb-1">Tipe Kamar</label>
+                    <select id="roomType" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-300">
+                        <option>Deluxe</option>
+                        <option>Suite</option>
+                        <option>Presidential</option>
+                    </select>
+                </div>
+                 <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" onclick="closeModal('addRoomModal')" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addGuestModal" class="fixed inset-0 z-50 items-center justify-center hidden modal-backdrop">
+        <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-xl fade-in">
+            <div class="flex justify-between items-center pb-3 border-b">
+                 <h2 class="text-2xl font-bold text-gray-800">Tambah Tamu Baru</h2>
+                 <button onclick="closeModal('addGuestModal')" class="p-1 rounded-full hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="addGuestForm" class="mt-6">
+                <div class="mb-4">
+                    <label for="guestNameInput" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap Tamu</label>
+                    <input type="text" id="guestNameInput" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-300" required>
+                </div>
+                <div class="mb-4">
+                    <label for="guestRoomNumber" class="block text-sm font-medium text-gray-700 mb-1">Nomor Kamar</label>
+                     <select id="guestRoomNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-300">
+                         </select>
+                </div>
+                <div class="mb-4">
+                    <label for="tvDeviceId" class="block text-sm font-medium text-gray-700 mb-1">ID Perangkat TV</label>
+                    <input type="text" id="tvDeviceId" value="TV-DEVICE-XXX" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                </div>
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" onclick="closeModal('addGuestModal')" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Check-in Tamu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // ==============================
+        // INITIAL DATA (for demo purposes)
+        // ==============================
+        let roomsData = [
+            { number: '101', type: 'Deluxe', status: 'Terisi' },
+            { number: '102', type: 'Deluxe', status: 'Kosong' },
+            { number: '201', type: 'Suite', status: 'Terisi' },
+            { number: '202', type: 'Suite', status: 'Perbaikan' },
+            { number: '301', type: 'Presidential', status: 'Kosong' },
+        ];
+
+        let guestsData = [
+            { name: 'Bapak Andi', room: '101', deviceId: 'TV-DEVICE-101', checkIn: '2025-09-20' },
+            { name: 'Ibu Sarah', room: '201', deviceId: 'TV-DEVICE-201', checkIn: '2025-09-19' },
+        ];
+        
+        // DATA BARU UNTUK PESANAN MAKANAN
+        let foodOrdersData = [
+            { id: 'ORD001', room: '101', items: [{name: 'Nasi Goreng', qty: 2}, {name: 'Jus Jeruk', qty: 2}], total: 180000, time: '15:46', status: 'Baru Masuk' },
+            { id: 'ORD002', room: '201', items: [{name: 'Sate Ayam', qty: 1}], total: 85000, time: '16:02', status: 'Diproses' },
+            { id: 'ORD003', room: '101', items: [{name: 'Sop Buntut', qty: 1}], total: 120000, time: '16:15', status: 'Selesai' },
+        ];
+
+        // ==============================
+        // VIEW MANAGEMENT
+        // ==============================
+        const loginPage = document.getElementById('loginPage');
+        const adminDashboard = document.getElementById('adminDashboard');
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'password') {
+                loginPage.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+                adminDashboard.classList.add('fade-in');
+            } else {
+                alert('Username atau password salah!');
+            }
+        });
+        
+        function logout() {
+            adminDashboard.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            loginPage.classList.add('fade-in');
+            document.getElementById('loginForm').reset();
+        }
+
+        // ==============================
+        // ADMIN PANEL LOGIC
+        // ==============================
+        function showAdminPage(pageId) {
+            document.querySelectorAll('.admin-page').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`admin-page-${pageId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.remove('active'));
+            const activeLink = document.querySelector(`.admin-nav-item[onclick="showAdminPage('${pageId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        function renderRoomsTable() {
+            const tbody = document.getElementById('roomsTableBody');
+            tbody.innerHTML = '';
+            roomsData.forEach(room => {
+                let statusClass = '';
+                if(room.status === 'Terisi') statusClass = 'bg-green-100 text-green-800';
+                else if(room.status === 'Kosong') statusClass = 'bg-blue-100 text-blue-800';
+                else statusClass = 'bg-yellow-100 text-yellow-800';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${room.number}</td>
+                        <td class="px-6 py-4">${room.type}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusClass}">${room.status}</span>
+                        </td>
+                        <td class="px-6 py-4 flex space-x-2">
+                            <button class="p-2 text-blue-500 rounded-full hover:bg-blue-100 hover:text-blue-700 transition"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button class="p-2 text-red-500 rounded-full hover:bg-red-100 hover:text-red-700 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function renderGuestsTable() {
+            const tbody = document.getElementById('guestsTableBody');
+            tbody.innerHTML = '';
+            guestsData.forEach(guest => {
+                 tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${guest.name}</td>
+                        <td class="px-6 py-4">${guest.room}</td>
+                        <td class="px-6 py-4 font-mono text-sm">${guest.deviceId}</td>
+                        <td class="px-6 py-4">${guest.checkIn}</td>
+                        <td class="px-6 py-4 flex space-x-2">
+                            <button class="p-2 text-blue-500 rounded-full hover:bg-blue-100 hover:text-blue-700 transition"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button class="p-2 text-red-500 rounded-full hover:bg-red-100 hover:text-red-700 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+        
+        function renderFoodOrdersTable() {
+            const tbody = document.getElementById('foodOrdersTableBody');
+            tbody.innerHTML = '';
+            foodOrdersData.forEach(order => {
+                let statusClass = '';
+                if(order.status === 'Selesai') statusClass = 'bg-green-100 text-green-800';
+                else if(order.status === 'Diproses') statusClass = 'bg-yellow-100 text-yellow-800';
+                else statusClass = 'bg-red-100 text-red-800';
+                
+                const orderDetails = order.items.map(item => `${item.qty}x ${item.name}`).join('<br>');
+                
+                tbody.innerHTML += `
+                     <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${order.room}</td>
+                        <td class="px-6 py-4 text-sm">${orderDetails}</td>
+                        <td class="px-6 py-4 font-medium">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total)}</td>
+                        <td class="px-6 py-4">${order.time}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusClass}">${order.status}</span>
+                        </td>
+                        <td class="px-6 py-4 flex space-x-2">
+                            ${order.status === 'Baru Masuk' ? `<button onclick="updateOrderStatus('${order.id}', 'Diproses')" class="px-3 py-1 text-xs font-semibold text-yellow-800 bg-yellow-200 rounded-full hover:bg-yellow-300 transition">Proses</button>` : ''}
+                            ${order.status === 'Diproses' ? `<button onclick="updateOrderStatus('${order.id}', 'Selesai')" class="px-3 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full hover:bg-green-300 transition">Selesaikan</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+        
+        function updateOrderStatus(orderId, newStatus) {
+            const order = foodOrdersData.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                renderFoodOrdersTable();
+                updateDashboardStats();
+            }
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('totalRooms').textContent = roomsData.length;
+            const occupied = roomsData.filter(r => r.status === 'Terisi').length;
+            document.getElementById('occupiedRooms').textContent = occupied;
+            document.getElementById('totalGuests').textContent = guestsData.length;
+            const newOrdersCount = foodOrdersData.filter(o => o.status === 'Baru Masuk').length;
+            document.getElementById('newOrders').textContent = newOrdersCount;
+        }
+        
+        function populateAvailableRooms() {
+            const select = document.getElementById('guestRoomNumber');
+            select.innerHTML = '';
+            roomsData.filter(r => r.status === 'Kosong').forEach(room => {
+                select.innerHTML += `<option value="${room.number}">${room.number} - ${room.type}</option>`;
+            });
+        }
+        
+        document.getElementById('guestRoomNumber').addEventListener('change', function() {
+            document.getElementById('tvDeviceId').value = `TV-DEVICE-${this.value}`;
+        });
+
+        // Modal logic
+        function openModal(modalId) {
+            if (modalId === 'addGuestModal') {
+                populateAvailableRooms();
+                const guestRoomSelect = document.getElementById('guestRoomNumber');
+                if (guestRoomSelect.value) {
+                    document.getElementById('tvDeviceId').value = `TV-DEVICE-${guestRoomSelect.value}`;
+                } else {
+                     document.getElementById('tvDeviceId').value = 'Tidak ada kamar kosong';
+                }
+            }
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        document.getElementById('addRoomForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newRoom = {
+                number: document.getElementById('roomNumber').value,
+                type: document.getElementById('roomType').value,
+                status: 'Kosong'
+            };
+            roomsData.push(newRoom);
+            renderRoomsTable();
+            updateDashboardStats();
+            closeModal('addRoomModal');
+            this.reset();
+        });
+
+        document.getElementById('addGuestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const roomNumber = document.getElementById('guestRoomNumber').value;
+            if (!roomNumber) {
+                alert('Tidak ada kamar kosong yang bisa dipilih.');
+                return;
+            }
+            const newGuest = {
+                name: document.getElementById('guestNameInput').value,
+                room: roomNumber,
+                deviceId: document.getElementById('tvDeviceId').value,
+                checkIn: new Date().toISOString().slice(0,10)
+            };
+            guestsData.push(newGuest);
+            const roomToUpdate = roomsData.find(r => r.number === newGuest.room);
+            if (roomToUpdate) roomToUpdate.status = 'Terisi';
+            
+            renderGuestsTable();
+            renderRoomsTable();
+            updateDashboardStats();
+            closeModal('addGuestModal');
+            this.reset();
+        });
+        
+        // ==============================
+        // INITIALIZATION
+        // ==============================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRoomsTable();
+            renderGuestsTable();
+            renderFoodOrdersTable();
+            updateDashboardStats();
+            lucide.createIcons();
+            showAdminPage('dashboard');
+        });
+
+    </script>
+</body>
+</html>
