@@ -100,21 +100,21 @@
                             <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">Total Kamar</h3>
-                                    <p id="totalRooms" class="text-3xl font-bold text-gray-800">50</p>
+                                    <p id="totalRooms" class="text-3xl font-bold text-gray-800">0</p>
                                 </div>
                                 <div class="p-3 bg-indigo-100 rounded-full"><i data-lucide="bed-double" class="w-6 h-6 text-indigo-600"></i></div>
                             </div>
                             <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">Kamar Terisi</h3>
-                                    <p id="occupiedRooms" class="text-3xl font-bold text-gray-800">35</p>
+                                    <p id="occupiedRooms" class="text-3xl font-bold text-gray-800">0</p>
                                 </div>
                                 <div class="p-3 bg-green-100 rounded-full"><i data-lucide="user-check" class="w-6 h-6 text-green-600"></i></div>
                             </div>
                             <div class="p-6 bg-white rounded-xl shadow-lg flex items-center justify-between">
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">Total Tamu Aktif</h3>
-                                    <p id="totalGuests" class="text-3xl font-bold text-gray-800">35</p>
+                                    <p id="totalGuests" class="text-3xl font-bold text-gray-800">0</p>
                                 </div>
                                 <div class="p-3 bg-sky-100 rounded-full"><i data-lucide="users" class="w-6 h-6 text-sky-600"></i></div>
                             </div>
@@ -192,7 +192,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="foodOrdersTableBody" class="text-gray-700 divide-y divide-gray-200">
-                                    </tbody>
+                                     </tbody>
                             </table>
                         </div>
                     </div>
@@ -242,7 +242,7 @@
                 <div class="mb-4">
                     <label for="guestRoomNumber" class="block text-sm font-medium text-gray-700 mb-1">Nomor Kamar</label>
                      <select id="guestRoomNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-300">
-                         </select>
+                     </select>
                 </div>
                 <div class="mb-4">
                     <label for="tvDeviceId" class="block text-sm font-medium text-gray-700 mb-1">ID Perangkat TV</label>
@@ -263,21 +263,33 @@
         let roomsData = [
             { number: '101', type: 'Deluxe', status: 'Terisi' },
             { number: '102', type: 'Deluxe', status: 'Kosong' },
+            { number: '103', type: 'Deluxe', status: 'Terisi' },
+            { number: '104', type: 'Deluxe', status: 'Kosong' },
             { number: '201', type: 'Suite', status: 'Terisi' },
             { number: '202', type: 'Suite', status: 'Perbaikan' },
+            { number: '203', type: 'Suite', status: 'Terisi' },
+            { number: '204', type: 'Suite', status: 'Kosong' },
             { number: '301', type: 'Presidential', status: 'Kosong' },
+            { number: '302', type: 'Presidential', status: 'Terisi' },
+            { number: '303', type: 'Presidential', status: 'Perbaikan' },
         ];
 
         let guestsData = [
-            { name: 'Bapak Andi', room: '101', deviceId: 'TV-DEVICE-101', checkIn: '2025-09-20' },
-            { name: 'Ibu Sarah', room: '201', deviceId: 'TV-DEVICE-201', checkIn: '2025-09-19' },
+            { name: 'Bapak Budi Santoso', room: '101', deviceId: 'TV-DEVICE-101', checkIn: '2025-09-20' },
+            { name: 'Ibu Citra Lestari', room: '201', deviceId: 'TV-DEVICE-201', checkIn: '2025-09-19' },
+            { name: 'Mr. John Smith', room: '302', deviceId: 'TV-DEVICE-302', checkIn: '2025-09-20' },
+            { name: 'Ibu Diana Putri', room: '103', deviceId: 'TV-DEVICE-103', checkIn: '2025-09-18' },
+            { name: 'Bapak Eko Prasetyo', room: '203', deviceId: 'TV-DEVICE-203', checkIn: '2025-09-20' },
         ];
         
         // DATA BARU UNTUK PESANAN MAKANAN
         let foodOrdersData = [
-            { id: 'ORD001', room: '101', items: [{name: 'Nasi Goreng', qty: 2}, {name: 'Jus Jeruk', qty: 2}], total: 180000, time: '15:46', status: 'Baru Masuk' },
-            { id: 'ORD002', room: '201', items: [{name: 'Sate Ayam', qty: 1}], total: 85000, time: '16:02', status: 'Diproses' },
-            { id: 'ORD003', room: '101', items: [{name: 'Sop Buntut', qty: 1}], total: 120000, time: '16:15', status: 'Selesai' },
+            { id: 'ORD001', room: '101', items: [{name: 'Nasi Goreng Spesial', qty: 2}, {name: 'Jus Jeruk', qty: 2}], total: 180000, time: '15:46', status: 'Selesai' },
+            { id: 'ORD002', room: '201', items: [{name: 'Sate Ayam', qty: 1}, {name: 'Es Teh Manis', qty: 1}], total: 95000, time: '16:02', status: 'Diproses' },
+            { id: 'ORD003', room: '302', items: [{name: 'Sirloin Steak', qty: 1}, {name: 'Red Wine', qty: 1}], total: 450000, time: '16:15', status: 'Baru Masuk' },
+            { id: 'ORD004', room: '103', items: [{name: 'Club Sandwich', qty: 1}], total: 75000, time: '16:30', status: 'Diproses' },
+            { id: 'ORD005', room: '203', items: [{name: 'Pizza Margherita', qty: 1}, {name: 'Cola', qty: 2}], total: 155000, time: '16:45', status: 'Baru Masuk' },
+            { id: 'ORD006', room: '101', items: [{name: 'Fruit Platter', qty: 1}], total: 60000, time: '17:00', status: 'Selesai' },
         ];
 
         // ==============================
@@ -379,18 +391,18 @@
                 
                 tbody.innerHTML += `
                      <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-medium">${order.room}</td>
-                        <td class="px-6 py-4 text-sm">${orderDetails}</td>
-                        <td class="px-6 py-4 font-medium">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total)}</td>
-                        <td class="px-6 py-4">${order.time}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusClass}">${order.status}</span>
-                        </td>
-                        <td class="px-6 py-4 flex space-x-2">
-                            ${order.status === 'Baru Masuk' ? `<button onclick="updateOrderStatus('${order.id}', 'Diproses')" class="px-3 py-1 text-xs font-semibold text-yellow-800 bg-yellow-200 rounded-full hover:bg-yellow-300 transition">Proses</button>` : ''}
-                            ${order.status === 'Diproses' ? `<button onclick="updateOrderStatus('${order.id}', 'Selesai')" class="px-3 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full hover:bg-green-300 transition">Selesaikan</button>` : ''}
-                        </td>
-                    </tr>
+                         <td class="px-6 py-4 font-medium">${order.room}</td>
+                         <td class="px-6 py-4 text-sm">${orderDetails}</td>
+                         <td class="px-6 py-4 font-medium">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total)}</td>
+                         <td class="px-6 py-4">${order.time}</td>
+                         <td class="px-6 py-4">
+                             <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusClass}">${order.status}</span>
+                         </td>
+                         <td class="px-6 py-4 flex space-x-2">
+                             ${order.status === 'Baru Masuk' ? `<button onclick="updateOrderStatus('${order.id}', 'Diproses')" class="px-3 py-1 text-xs font-semibold text-yellow-800 bg-yellow-200 rounded-full hover:bg-yellow-300 transition">Proses</button>` : ''}
+                             ${order.status === 'Diproses' ? `<button onclick="updateOrderStatus('${order.id}', 'Selesai')" class="px-3 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full hover:bg-green-300 transition">Selesaikan</button>` : ''}
+                         </td>
+                     </tr>
                 `;
             });
             lucide.createIcons();
